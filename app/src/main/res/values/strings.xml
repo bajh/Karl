@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Karl</string>
-    <string name="edit_message">Type your message here</string>
     <string name="button_send">Send</string>
+    <string name="submission_invitation">Click Send to save your location</string>
 </resources>

@@ -1,6 +1,7 @@
 Karl is an app that shows you where you've been.
 
 Product Roadmap:
+# Get the user's location on click
 # Get the user's location every N minutes.
 # Store the user's location (using file storage)
 # Show a map
