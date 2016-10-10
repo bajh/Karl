@@ -14,9 +14,13 @@ public class DisplayMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_message);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        Bundle bundle = intent.getBundleExtra(MainActivity.EXTRA_MESSAGE);
+        Double latitude = bundle.getDouble("latitude");
+        Double longitude = bundle.getDouble("longitude");
+
         TextView textView = new TextView(this);
-        textView.setTextSize(40);
+        textView.setTextSize(20);
+        String message = "Your latitude: " + latitude + "\nYour longitude: " + longitude;
         textView.setText(message);
 
         ViewGroup layout = (ViewGroup) findViewById(R.id.activity_display_message);

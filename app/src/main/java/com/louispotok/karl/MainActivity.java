@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-
+import android.Manifest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -31,8 +29,6 @@ public class MainActivity extends AppCompatActivity implements
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-
-
     }
 
     @Override
@@ -66,9 +62,19 @@ public class MainActivity extends AppCompatActivity implements
 
     /* Called when the user clicks the "Send" button */
     public void saveLocation(View view) {
+
+        // get location
         mGoogleApiClient.connect();
         double latitude = myLastLocation.getLatitude();
         double longitude = myLastLocation.getLongitude();
-        // write to file
+
+        // pass to the next activity
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putDouble("latitude", latitude);
+        bundle.putDouble("longitude", longitude);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
     }
 }
