@@ -17,10 +17,11 @@ public class DisplayMessageActivity extends AppCompatActivity {
         Bundle bundle = intent.getBundleExtra(MainActivity.EXTRA_MESSAGE);
         Double latitude = bundle.getDouble("latitude");
         Double longitude = bundle.getDouble("longitude");
+        String locationTimestamp = bundle.getString("locationTimestamp");
 
         TextView textView = new TextView(this);
         textView.setTextSize(20);
-        String message = "Your latitude: " + latitude + "\nYour longitude: " + longitude;
+        String message = "Your latitude: " + latitude + "\nYour longitude: " + longitude + "\nTimestamp: " + locationTimestamp;
         textView.setText(message);
 
         ViewGroup layout = (ViewGroup) findViewById(R.id.activity_display_message);

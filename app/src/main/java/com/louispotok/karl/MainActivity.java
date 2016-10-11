@@ -14,9 +14,10 @@ import com.google.android.gms.location.LocationServices;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    public GoogleApiClient mGoogleApiClient;
-    public Location myLastLocation;
+    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+    GoogleApiClient mGoogleApiClient;
+    Location myLastLocation;
+    String STORAGE_FILENAME = "karl_location_storage";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +68,15 @@ public class MainActivity extends AppCompatActivity implements
         mGoogleApiClient.connect();
         double latitude = myLastLocation.getLatitude();
         double longitude = myLastLocation.getLongitude();
+        long locationTimestamp = myLastLocation.getTime();
+        
 
         // pass to the next activity
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         Bundle bundle = new Bundle();
         bundle.putDouble("latitude", latitude);
         bundle.putDouble("longitude", longitude);
+        bundle.putDouble("locationTimestamp", locationTimestamp);
         intent.putExtras(bundle);
         startActivity(intent);
 
