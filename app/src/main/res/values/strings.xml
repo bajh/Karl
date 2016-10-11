@@ -2,4 +2,6 @@
     <string name="app_name">Karl</string>
     <string name="button_send">Send</string>
     <string name="submission_invitation">Click Send to save your location</string>
+    <string name="return_to_main">Return to home screen</string>
+
 </resources>
