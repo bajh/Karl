@@ -4,23 +4,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.Manifest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-
-import java.io.FileNotFoundException;
+import android.widget.Toast;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Array;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+    private final int REQUEST_PERMISSION_ACCESS_FINE_LOCATION=1;
     GoogleApiClient mGoogleApiClient;
     Location myLastLocation;
     String STORAGE_FILENAME = "karl_location_storage";
@@ -40,29 +41,58 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
+        Log.d("Karl", "in OnConnected!");
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            Log.d("Karl", "have permission!");
             myLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                     mGoogleApiClient);
         }
+        else {
+            Log.d("Karl", "about to request permission!");
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSION_ACCESS_FINE_LOCATION
+                    );
+        }
+    }
 
-        //TODO
-        else {}
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            String permissions[],
+            int[] grantResults) {
+        Log.d("Karl", "got permission result!");
+        switch (requestCode) {
+            case REQUEST_PERMISSION_ACCESS_FINE_LOCATION:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                }
+        }
     }
 
     // TODO
-    public void onConnectionFailed(ConnectionResult result) {}
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.d("Karl", "connection failed!");
+    }
 
     // TODO
-    public void onConnectionSuspended(int cause) {}
+    public void onConnectionSuspended(int cause) {
+        Log.d("Karl", "connection suspended!");
+    }
 
     protected void onStart() {
+        Log.d("Karl", "onStart!");
         mGoogleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
+        Log.d("Karl", "onStop!");
         mGoogleApiClient.disconnect();
         super.onStop();
     }
@@ -82,10 +112,25 @@ public class MainActivity extends AppCompatActivity implements
     public void saveLocation(View view) {
 
         // get location
+        Log.d("Karl", myLastLocation.toString());
         mGoogleApiClient.connect();
-        String latitude = Double.toString(myLastLocation.getLatitude());
-        String longitude = Double.toString(myLastLocation.getLongitude());
-        String locationTimestamp = Long.toString(myLastLocation.getTime());
+        Log.d("Karl", "done trying to connect....");
+        Log.d("Karl", myLastLocation.toString());
+
+        // this shit is so ugly
+        // but doing in one shot, like:
+        //      String latitude = Double.toString(myLastLocation.getLatitude());
+        // returned a NullPointerException.
+        Double rawLatitude = myLastLocation.getLatitude();
+        Double rawLongitude = myLastLocation.getLongitude();
+        Long rawLocationTimestamp = myLastLocation.getTime();
+        Log.d("Karl", rawLatitude.toString());
+        Log.d("Karl", Double.toString(rawLatitude));
+        Log.d("Karl", rawLongitude.toString());
+        Log.d("Karl", rawLocationTimestamp.toString());
+        String latitude= Double.toString(rawLatitude );
+        String longitude = Double.toString(rawLongitude);
+        String locationTimestamp = Long.toString(rawLocationTimestamp);
         String[] data = {latitude, longitude, locationTimestamp};
 
         // store to file
@@ -98,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements
         // pass to the next activity
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         Bundle bundle = new Bundle();
+        Log.d("Karl", "made the bundle");
         bundle.putString("latitude", latitude);
         bundle.putString("longitude", longitude);
         bundle.putString("locationTimestamp", locationTimestamp);
