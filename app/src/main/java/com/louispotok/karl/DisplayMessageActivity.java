@@ -15,8 +15,8 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra(MainActivity.EXTRA_MESSAGE);
-        Double latitude = bundle.getDouble("latitude");
-        Double longitude = bundle.getDouble("longitude");
+        String latitude = bundle.getString("latitude");
+        String longitude = bundle.getString("longitude");
         String locationTimestamp = bundle.getString("locationTimestamp");
 
         TextView textView = new TextView(this);

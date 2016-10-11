@@ -1,5 +1,6 @@
 package com.louispotok.karl;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,6 +12,11 @@ import android.Manifest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Array;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -61,22 +67,40 @@ public class MainActivity extends AppCompatActivity implements
         super.onStop();
     }
 
+    private void writeToFile(String data) {
+        try {
+            FileOutputStream fos= openFileOutput(STORAGE_FILENAME, Context.MODE_APPEND);
+            fos.write(data.getBytes());
+            fos.close();
+        }
+        catch (IOException e) {
+            //TODO
+        }
+    }
+
     /* Called when the user clicks the "Send" button */
     public void saveLocation(View view) {
 
         // get location
         mGoogleApiClient.connect();
-        double latitude = myLastLocation.getLatitude();
-        double longitude = myLastLocation.getLongitude();
-        long locationTimestamp = myLastLocation.getTime();
-        
+        String latitude = Double.toString(myLastLocation.getLatitude());
+        String longitude = Double.toString(myLastLocation.getLongitude());
+        String locationTimestamp = Long.toString(myLastLocation.getTime());
+        String[] data = {latitude, longitude, locationTimestamp};
+
+        // store to file
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String datum: data) {
+            stringBuilder.append(datum).append(",");
+        }
+        writeToFile(stringBuilder.toString());
 
         // pass to the next activity
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putDouble("latitude", latitude);
-        bundle.putDouble("longitude", longitude);
-        bundle.putDouble("locationTimestamp", locationTimestamp);
+        bundle.putString("latitude", latitude);
+        bundle.putString("longitude", longitude);
+        bundle.putString("locationTimestamp", locationTimestamp);
         intent.putExtras(bundle);
         startActivity(intent);
 
