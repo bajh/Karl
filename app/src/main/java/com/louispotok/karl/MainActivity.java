@@ -14,16 +14,21 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import android.widget.Toast;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    // hm, should probably do something with this....
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+
+    public static final String STORAGE_FILENAME = "karl_location_storage";
+
+    // honestly don't know why this rigamarole is necessary
     private final int REQUEST_PERMISSION_ACCESS_FINE_LOCATION=1;
+
     GoogleApiClient mGoogleApiClient;
     Location myLastLocation;
-    String STORAGE_FILENAME = "karl_location_storage";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +93,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private void writeToFile(String data) {
         try {
-            FileOutputStream fos= openFileOutput(STORAGE_FILENAME, Context.MODE_APPEND);
-            fos.write(data.getBytes());
-            fos.close();
+            FileWriter fileWriter = new FileWriter(STORAGE_FILENAME, true);
+            fileWriter.write("\n");
+            fileWriter.write(data);
+            fileWriter.close();
         }
         catch (IOException e) {
             //TODO
