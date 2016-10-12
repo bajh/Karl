@@ -39,12 +39,17 @@ public class DisplayMessageActivity extends AppCompatActivity {
     private void readFromFile() {
         Log.d("Karl", "trying to read");
         try {
+            StringBuffer buffer = new StringBuffer();
             FileInputStream inputStream = openFileInput(MainActivity.STORAGE_FILENAME);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String s;
+            int i = 0;
             while((s = reader.readLine()) != null) {
-                Log.d("Karl",s);
+                Log.d("Karl reading line " + Integer.toString(i) ,s);
+                i += 1;
+                buffer.append(s).append("\n");
             }
+            inputStream.close();
         } catch (IOException er) {
             //TODO
             Log.d("Karl", "yuppers");

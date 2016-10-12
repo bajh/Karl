@@ -14,7 +14,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import android.widget.Toast;
-import java.io.FileWriter;
+
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements
@@ -43,8 +44,7 @@ public class MainActivity extends AppCompatActivity implements
                 .build();
     }
 
-    @Override
-    public void onConnected(Bundle connectionHint) {
+    public void getLocation() {
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
@@ -55,8 +55,13 @@ public class MainActivity extends AppCompatActivity implements
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSION_ACCESS_FINE_LOCATION
-                    );
+            );
         }
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        getLocation();
     }
 
     @Override
@@ -76,7 +81,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // TODO
-    public void onConnectionFailed(ConnectionResult result) {}
+    public void onConnectionFailed(ConnectionResult result) {
+    }
 
     // TODO
     public void onConnectionSuspended(int cause) {}
@@ -91,12 +97,16 @@ public class MainActivity extends AppCompatActivity implements
         super.onStop();
     }
 
-    private void writeToFile(String data) {
+    private void writeToFile(String[] data) {
         try {
-            FileWriter fileWriter = new FileWriter(STORAGE_FILENAME, true);
-            fileWriter.write("\n");
-            fileWriter.write(data);
-            fileWriter.close();
+            StringBuilder stringBuilder = new StringBuilder("\n");
+            for (String datum: data) {
+                stringBuilder.append(datum).append(",");
+            }
+            String toWrite = stringBuilder.toString();
+            FileOutputStream fos = openFileOutput(STORAGE_FILENAME, MODE_APPEND);
+            fos.write(toWrite.getBytes());
+            fos.close();
         }
         catch (IOException e) {
             //TODO
@@ -106,18 +116,17 @@ public class MainActivity extends AppCompatActivity implements
     /* Called when the user clicks the "Send" button */
     public void saveLocation(View view) {
 
-        // get location
+        // the location may be out of date because we use the getLastLocation method
+        // TODO: for higher accuracy, we could start requesting location updates
+
         String latitude = Double.toString(myLastLocation.getLatitude());
         String longitude = Double.toString(myLastLocation.getLongitude());
         String locationTimestamp = Long.toString(myLastLocation.getTime());
         String[] data = {latitude, longitude, locationTimestamp};
 
         // store to file
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String datum: data) {
-            stringBuilder.append(datum).append(",");
-        }
-        writeToFile(stringBuilder.toString());
+
+        writeToFile(data);
 
         // pass to the next activity
         Intent intent = new Intent(this, DisplayMessageActivity.class);
