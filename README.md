@@ -1,6 +1,7 @@
 Karl is an android app that shows you where you've been.
 
 Karl has two namesakes:
+
 1. Carl von Clausewitz, who invented the term "fog of war"
 2. Karl the Fog is SF's anthropomorphic marine layer (https://twitter.com/KarlTheFog)
 
